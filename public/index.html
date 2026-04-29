@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tester Agent</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/tabulator-tables@6/dist/css/tabulator.min.css">
+  <style>
+    :root { --pico-font-size: 90%; }
+    body { padding: 1rem; }
+    .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 0.5rem; }
+    .nav-tabs button { margin-bottom: 0; }
+    .nav-tabs button.active { background: var(--pico-primary); border-color: var(--pico-primary); }
+    .section { display: none; }
+    .section.active { display: block; }
+    .tag { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 0.25rem; background: var(--pico-primary-background); color: var(--pico-primary-inverse); font-size: 0.75rem; margin-right: 0.25rem; }
+    .status-passed { color: var(--pico-color-green-500); }
+    .status-failed { color: var(--pico-color-red-500); }
+    .status-blocked { color: var(--pico-color-orange-500); }
+    .status-pending { color: var(--pico-color-gray-500); }
+    .status-running { color: var(--pico-color-blue-500); }
+    .evidence-img { max-width: 100%; border: 1px solid var(--pico-muted-border-color); margin: 0.5rem 0; }
+    pre { background: var(--pico-code-background-color); padding: 0.5rem; border-radius: 0.25rem; overflow-x: auto; }
+    .editor-field { min-height: 200px; font-family: monospace; }
+    .toolbar { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
+    .back-link { cursor: pointer; color: var(--pico-primary); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tester Agent</h1>
+    <div class="nav-tabs">
+      <button class="active" onclick="showSection('coverage')">Coverage</button>
+      <button onclick="showSection('executions')">Executions</button>
+      <button onclick="showSection('docs')">Docs</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Coverage Section -->
+    <div id="coverage-section" class="section active">
+      <div class="toolbar">
+        <button onclick="openCoverageEditor()">+ Add Scenario</button>
+        <input type="text" id="coverage-filter" placeholder="Filter coverage..." oninput="filterCoverage()">
+        <button onclick="triggerExecution()">Run All</button>
+        <button onclick="triggerFilteredExecution()">Run Filtered</button>
+      </div>
+      <div id="coverage-table"></div>
+    </div>
+
+    <!-- Executions Section -->
+    <div id="executions-section" class="section">
+      <div class="toolbar">
+        <input type="text" id="execution-filter" placeholder="Filter executions..." oninput="filterExecutions()">
+      </div>
+      <div id="executions-table"></div>
+    </div>
+
+    <!-- Execution Detail Section -->
+    <div id="execution-detail-section" class="section">
+      <a class="back-link" onclick="showSection('executions')">&larr; Back to Executions</a>
+      <h2 id="execution-detail-title">Execution #</h2>
+      <div id="execution-detail-table"></div>
+    </div>
+
+    <!-- Scenario Detail Section -->
+    <div id="scenario-detail-section" class="section">
+      <a class="back-link" onclick="showSection('coverage')">&larr; Back to Coverage</a>
+      <h2 id="scenario-detail-title">Scenario</h2>
+      <div id="scenario-info"></div>
+      <h3>Execution History</h3>
+      <div id="scenario-history-table"></div>
+    </div>
+
+    <!-- Evidence Viewer Section -->
+    <div id="evidence-section" class="section">
+      <a class="back-link" onclick="historyBack()">&larr; Back</a>
+      <div id="evidence-content"></div>
+    </div>
+
+    <!-- Coverage Editor Section -->
+    <div id="coverage-editor-section" class="section">
+      <a class="back-link" onclick="showSection('coverage')">&larr; Cancel</a>
+      <h2 id="coverage-editor-title">Edit Scenario</h2>
+      <form onsubmit="saveCoverage(event)">
+        <input type="hidden" id="coverage-id">
+        <label>System Name <input type="text" id="coverage-system" required></label>
+        <label>Feature Name <input type="text" id="coverage-feature" required></label>
+        <label>Scenario Name <input type="text" id="coverage-scenario" required></label>
+        <label>Risk Tags <input type="text" id="coverage-tags" placeholder="critical,smoke,medium"></label>
+        <label>Steps (one per line) <textarea id="coverage-steps" rows="6" class="editor-field" required></textarea></label>
+        <label>Assertions (one per line) <textarea id="coverage-assertions" rows="4" class="editor-field" required></textarea></label>
+        <button type="submit">Save</button>
+        <button type="button" class="secondary" onclick="deleteCoverage()" id="btn-delete-coverage" style="display:none">Delete</button>
+      </form>
+    </div>
+
+    <!-- Docs Section -->
+    <div id="docs-section" class="section">
+      <div class="toolbar">
+        <button onclick="loadDoc('auth')">Auth</button>
+        <button onclick="loadDoc('env')">Env</button>
+        <button onclick="loadDoc('sitemap')">Sitemap</button>
+        <button onclick="saveCurrentDoc()">Save</button>
+      </div>
+      <h3 id="doc-title">Auth</h3>
+      <textarea id="doc-content" class="editor-field" rows="20"></textarea>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/tabulator-tables@6/dist/js/tabulator.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
