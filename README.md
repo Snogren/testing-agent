@@ -1,29 +1,50 @@
-# Getting Started
+# Testing Agent
 
-Five steps from zero to your first automated test execution.
+AI-driven scenario testing platform with coverage tracking, parallel agent execution, and evidence verification.
 
----
-
-## 1. Prerequisites
-
-- **Node.js 18+**
-- **Opencode CLI** installed (`npm install -g opencode` or see [opencode.ai](https://opencode.ai))
-- **API key** for your LLM provider (e.g., Anthropic, OpenAI)
-- **Your app running locally** at a known URL
+This is a **template repository**. Create your own copy to manage your team's test scenarios, execution history, and evidence.
 
 ---
 
-## 2. Install
+## Workflow
+
+```
+Template Repo (this)
+        |
+        | Use this template
+        v
+   Your Private Repo
+        |
+        | git clone
+        v
+   Local Development
+```
+
+Your scenarios, execution history (`data/tester.db`), screenshots, and evidence are all committed to your private repo so your team can share them.
+
+---
+
+## 1. Create Your Own Repo from This Template
+
+Click **"Use this template"** on GitHub, or use the CLI:
 
 ```bash
-git clone <your-repo-url> tester-agent
-cd tester-agent
+gh repo create my-team-tests --template Snogren/testing-agent --private
+```
+
+Then clone your new repo:
+
+```bash
+git clone https://github.com/yourname/my-team-tests.git
+cd my-team-tests
 npm install
 ```
 
+**Why template instead of fork?** A fork implies contributing back. A template clone creates a clean, independent repo for your team's test data.
+
 ---
 
-## 3. Configure Opencode
+## 2. Configure Opencode
 
 Create or edit `~/.config/opencode/opencode.json` and add the Playwright MCP server:
 
@@ -51,7 +72,7 @@ export ANTHROPIC_API_KEY=your-key-here
 
 ---
 
-## 4. Write Your Onboarding Docs
+## 3. Write Your Onboarding Docs
 
 Edit these three files so the agent knows how to access your app:
 
@@ -74,7 +95,7 @@ Edit these three files so the agent knows how to access your app:
 
 ---
 
-## 5. Add Test Scenarios
+## 4. Add Test Scenarios
 
 ### Option A: Via the Dashboard
 
@@ -96,7 +117,7 @@ sqlite3 data/tester.db "INSERT INTO Coverage (system_name, feature_name, scenari
 
 ---
 
-## 6. Run Your First Execution
+## 5. Run Your First Execution
 
 ```bash
 npm start
@@ -111,12 +132,47 @@ npm start
 
 ---
 
-## 7. Review Results
+## 6. Review Results
 
 - **Green / passed** = Agent completed steps and assertions
 - **Red / failed** = Agent hit an error or assertion failed
 - **⚠️ Modified** = Agent deviated from the original test. Click **Evidence** to see why.
 - **Flagged for review** = Verifier confidence was low or test was modified. Human eyes needed.
+
+---
+
+## Sharing Test Results with Your Team
+
+Because `data/` and `evidence/` are tracked in git, your team's test history travels with the repo:
+
+```bash
+# After running tests, commit the results
+git add data/ evidence/ docs/
+git commit -m "Add login flow tests and evidence from execution #3"
+git push origin main
+
+# teammate pulls and sees everything
+git pull origin main
+npm start
+# They see all scenarios, execution history, and evidence in the dashboard
+```
+
+---
+
+## Pulling Updates from the Original Template
+
+When the original template gets improvements (new features, bug fixes, better prompts), pull them into your repo:
+
+```bash
+# One-time setup
+git remote add upstream https://github.com/Snogren/testing-agent.git
+
+# Pull updates
+git fetch upstream
+git merge upstream/main
+```
+
+Resolve any conflicts, then push to your repo.
 
 ---
 
