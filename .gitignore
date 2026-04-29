@@ -143,7 +143,5 @@ vite.config.ts.timestamp-*
 .vite/
 
 # Project-specific
-# SQLite database
-data/
-# Generated evidence and screenshots
-evidence/
+# Only ignore local dev artifacts, not shared data
+# data/ and evidence/ are intentionally committed so teams can share test results
