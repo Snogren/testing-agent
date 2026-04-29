@@ -46,12 +46,13 @@ npm install
 
 ## 2. Configure Opencode
 
+Install and configure Opencode: [https://opencode.ai/docs](https://opencode.ai/docs)
+
 Create or edit `~/.config/opencode/opencode.json` and add the Playwright MCP server:
 
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-3-5-sonnet-20241022",
   "mcp": {
     "playwright": {
       "type": "local",
@@ -62,13 +63,14 @@ Create or edit `~/.config/opencode/opencode.json` and add the Playwright MCP ser
 }
 ```
 
-Set your API key:
+Set your provider API key (Opencode reads standard provider env vars):
 
 ```bash
 export ANTHROPIC_API_KEY=your-key-here
+# or
+export OPENAI_API_KEY=your-key-here
+# or whichever provider you configured
 ```
-
-*(Or add it to your shell profile. Opencode reads standard provider env vars.)*
 
 ---
 
@@ -180,7 +182,7 @@ Resolve any conflicts, then push to your repo.
 
 | Problem | Fix |
 |---------|-----|
-| `Opencode server not found` | Make sure `opencode` CLI is installed and `ANTHROPIC_API_KEY` is set |
+| `Opencode server not found` | Make sure `opencode` CLI is installed and your provider API key is set |
 | `Port 4097 in use` | Kill existing opencode processes: `pkill -f opencode` |
 | Agent can't find login page | Check `docs/sitemap.md` and `docs/auth.md` are accurate |
 | Screenshots missing | Agent may not have write permissions to `./evidence/`. Check `ls -la evidence/` |
